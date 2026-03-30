@@ -2,9 +2,9 @@ name: CI Build
 
 on:
   push:
-    branches: [ master, main ]
+    branches: [ master, main, merge-smcoppola ]
   pull_request:
-    branches: [ master, main ]
+    branches: [ master, main, merge-smcoppola ]
 
 jobs:
   build-desktop:
