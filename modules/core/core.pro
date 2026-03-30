@@ -19,6 +19,7 @@ CONFIG += c++11
 
 # add this define to set dllimport/dllexport for msvc
 DEFINES += EPT_BUILD_CORE
+win32-msvc*:QMAKE_CXXFLAGS += /Zc:preprocessor
 
 # set the destiantion dir
 DESTDIR = $$EPT_CORE_OUT_DIR

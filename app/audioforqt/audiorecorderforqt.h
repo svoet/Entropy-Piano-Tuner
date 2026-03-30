@@ -20,37 +20,38 @@
 #ifndef AUDIORECORDERFORQT_H
 #define AUDIORECORDERFORQT_H
 
-#include <QAudioInput>
+#include <QAudioSource>
 #include <QTimer>
 
 #include "prerequisites.h"
 
 #include "audiointerfaceforqt.h"
 
-class AudioRecorderForQt : public AudioInterfaceForQt
-{
-    Q_OBJECT
+class AudioRecorderForQt : public AudioInterfaceForQt {
+  Q_OBJECT
 
 public:
-    AudioRecorderForQt(QObject *parent);
-    virtual ~AudioRecorderForQt();
+  AudioRecorderForQt(QObject *parent);
+  virtual ~AudioRecorderForQt();
 
-    void exit() override;
+  void exit() override;
 
-    void start() override;
-    void stop() override;
+  void start() override;
+  void stop() override;
 
-    virtual void suspendChanged(bool v) override final;
+  virtual void suspendChanged(bool v) override final;
 
-    virtual void setGain(double volume) override final;
-    virtual double getGain() const override final;
+  virtual void setGain(double volume) override final;
+  virtual double getGain() const override final;
 
 protected:
-   virtual QAudio::Error createDevice(const QAudioFormat &format, const QAudioDeviceInfo &info, int bufferSizeMS) override final;
+  virtual QAudio::Error createDevice(const QAudioFormat &format,
+                                     const QAudioDevice &info,
+                                     int bufferSizeMS) override final;
 
 private:
-    QAudioInput *mAudioInput;
-    QTimer mReadTimer;
+  QAudioSource *mAudioInput;
+  QTimer mReadTimer;
 };
 
 #endif // AUDIORECORDERFORQT_H

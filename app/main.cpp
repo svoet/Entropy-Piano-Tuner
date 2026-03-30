@@ -22,7 +22,7 @@
 /// \author Christoph Wick and Haye Hinrichsen
 /// \author Institute for Physics and Astronomy<br>
 /// University of Würzburg<br> 97074 Würzburg, Germany
-/// \author e-mail: info at piano-tuner.org
+/// \author e-mail: N/A
 ///
 /// The Entropy-Piano-Tuner (EPT) is a free experimental software for piano
 /// tuning.
@@ -48,131 +48,133 @@
 /// http://develop.piano-tuner.org
 //////////////////////////////////////////////////////////////////////////////
 
-#include <QTranslator>
+#include <QDir>
 #include <QLibraryInfo>
 #include <QMessageBox>
 #include <QStandardPaths>
-#include <QDir>
+#include <QTranslator>
 #include <qdebug.h>
 
-#include "core/system/serverinfo.h"
-#include "core/system/eptexception.h"
 #include "core/config.h"
+#include "core/system/eptexception.h"
+#include "core/system/serverinfo.h"
 
 #include "implementations/filemanagerforqt.h"
-#include "implementations/settingsforqt.h"
 #include "implementations/platformtools.h"
+#include "implementations/settingsforqt.h"
 #include "qtconfig.h"
 #include "runguard.h"
 #include "tunerapplication.h"
 
-int main(int argc, char *argv[])
-{
-    // basic application properties (needed for settings)
-    QCoreApplication::setOrganizationName("tp3");
-    QCoreApplication::setOrganizationDomain(serverinfo::SERVER_DOMAIN.c_str());
-    QCoreApplication::setApplicationName("Entropy Piano Tuner");
+int main(int argc, char *argv[]) {
+  // basic application properties (needed for settings)
+  QCoreApplication::setOrganizationName("tp3");
+  QCoreApplication::setOrganizationDomain(serverinfo::SERVER_DOMAIN.c_str());
+  QCoreApplication::setApplicationName("Entropy Piano Tuner");
 
-    // =========================================================================================
-    // Create application an initialize the basic components:
-    //  - Plaform dependent tools
-    //  - Settings
-    //  - Translation
+  // =========================================================================================
+  // Create application an initialize the basic components:
+  //  - Plaform dependent tools
+  //  - Settings
+  //  - Translation
 
-    // create our application object
-    TunerApplication a(argc, argv);
+  // create our application object
+  TunerApplication a(argc, argv);
 
-    // setup platformtools
+  // setup platformtools
 
-    // required if no platform specific platform tools
-    std::unique_ptr<PlatformTools> defaultPlatformTools;
-    if (!PlatformTools::getSingleton()) {
-        defaultPlatformTools.reset(new PlatformTools());
-        // no platform specific platform tools, use default ones
-    }
+  // required if no platform specific platform tools
+  std::unique_ptr<PlatformTools> defaultPlatformTools;
+  if (!PlatformTools::getSingleton()) {
+    defaultPlatformTools.reset(new PlatformTools());
+    // no platform specific platform tools, use default ones
+  }
 
-    // Settings object
-    QSettings settings;
+  // Settings object
+  QSettings settings;
 
-    // install language files
-    QTranslator qtTranslator;
+  // install language files
+  QTranslator qtTranslator;
 
-    QString localeName(settings.value(SettingsForQt::KEY_LANGUAGE_ID, QString()).toString());
-    if (localeName.isEmpty()) {
-        // system language
-        localeName = QLocale::system().name();
-    }
-    // set default to be sure that this is not "C"
-    QLocale::setDefault(QLocale(localeName));
+  QString localeName(
+      settings.value(SettingsForQt::KEY_LANGUAGE_ID, QString()).toString());
+  if (localeName.isEmpty()) {
+    // system language
+    localeName = QLocale::system().name();
+  }
+  // set default to be sure that this is not "C"
+  QLocale::setDefault(QLocale(localeName));
 
-    // Qt translation
-    qtTranslator.load(QLocale(), "qt", "_", ":/languages/translations");
-    a.installTranslator(&qtTranslator);
+  // Qt translation
+  qtTranslator.load(QLocale(), "qt", "_", ":/languages/translations");
+  a.installTranslator(&qtTranslator);
 
-    // application translation
-    QTranslator myappTranslator;
-    myappTranslator.load(QLocale(), "piano_tuner", "_", ":/languages/translations");
-    a.installTranslator(&myappTranslator);
+  // application translation
+  QTranslator myappTranslator;
+  myappTranslator.load(QLocale(), "piano_tuner", "_",
+                       ":/languages/translations");
+  a.installTranslator(&myappTranslator);
 
-    // =========================================================================================
-    // Check if app is already running
+  // =========================================================================================
+  // Check if app is already running
 
-    // only single instance also on desktop (on mobile platforms this is handled already, winphone needs an "extra sausage")
+  // only single instance also on desktop (on mobile platforms this is handled
+  // already, winphone needs an "extra sausage")
 #if defined(Q_OS_DESKTOP) && !defined(Q_OS_WINPHONE)
-    RunGuard guard("entropypianotuner_runguard");
-    if ( !guard.tryToRun() ) {
-        // a QApplication is required for showing message boxes
-        QMessageBox::warning(nullptr, a.tr("Application can not be started"), a.tr("The Entropy Piano Tuner could not be started because another instance is already running."));
-        return 0;
-    }
+  RunGuard guard("entropypianotuner_runguard");
+  if (!guard.tryToRun()) {
+    // a QApplication is required for showing message boxes
+    QMessageBox::warning(nullptr, a.tr("Application can not be started"),
+                         a.tr("The Entropy Piano Tuner could not be started "
+                              "because another instance is already running."));
+    return 0;
+  }
 #endif
 
-    // =========================================================================================
-    // Launching the application, mainwindow, core, ...
+  // =========================================================================================
+  // Launching the application, mainwindow, core, ...
 
-    // create file manager instance to initialize file paths
-    new FileManagerForQt();
+  // create file manager instance to initialize file paths
+  new FileManagerForQt();
 
-    // Initialize log
-    tp3Log::setLogPath(QString::fromStdString(FileManagerForQt::getSingleton().getLogFilePath("log.txt")));
+  // Initialize log
+  tp3Log::setLogPath(QString::fromStdString(
+      FileManagerForQt::getSingleton().getLogFilePath("log.txt")));
 
-    int exitCode = -1;
+  int exitCode = -1;
 
-    try {
-        // create settings
-        (new SettingsForQt())->load();
+  try {
+    // create settings
+    (new SettingsForQt())->load();
 
-        // increase run count
-        SettingsForQt::getSingleton().increaseApplicationRuns();
+    // increase run count
+    SettingsForQt::getSingleton().increaseApplicationRuns();
 
-        a.playStartupSound();
+    a.playStartupSound();
 
-        // init all components
-        a.init();
+    // init all components
+    a.init();
 
-        // start the application
-        a.start();
+    // start the application
+    a.start();
 
-        // execute the application
-        exitCode = a.exec();
-    }
-    catch (const EptException &e) {
-        qCritical() << "Unhandled exception: ";
-        qCritical() << QString::fromStdString(e.getFullDescription());
-        exitCode = EXIT_FAILURE;
-    }
-    catch (const std::exception &e) {
-        qCritical() << "Unhandled exception: ";
-        qCritical() << QString::fromStdString(e.what());
-        exitCode = EXIT_FAILURE;
-    }
-    catch (...) {
-        qCritical() << "Unhandled exception: ";
-        qCritical() << "unknown exception";
-        exitCode = EXIT_FAILURE;
-    }
+    // execute the application
+    exitCode = a.exec();
+  } catch (const EptException &e) {
+    qCritical() << "Unhandled exception: ";
+    qCritical() << QString::fromStdString(e.getFullDescription());
+    exitCode = EXIT_FAILURE;
+  } catch (const std::exception &e) {
+    qCritical() << "Unhandled exception: ";
+    qCritical() << QString::fromStdString(e.what());
+    exitCode = EXIT_FAILURE;
+  } catch (...) {
+    qCritical() << "Unhandled exception: ";
+    qCritical() << "unknown exception";
+    exitCode = EXIT_FAILURE;
+  }
 
-    PlatformTools::getSingleton()->enableScreensaver();
+  PlatformTools::getSingleton()->enableScreensaver();
 
-    return exitCode;
+  return exitCode;
 }

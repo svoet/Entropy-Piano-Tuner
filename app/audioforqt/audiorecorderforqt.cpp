@@ -18,99 +18,96 @@
  *****************************************************************************/
 
 #include "audiorecorderforqt.h"
-#include <qdebug.h>
 #include <QTimer>
 #include <assert.h>
+#include <qdebug.h>
 
 #include "core/system/log.h"
 
-#include "implementations/settingsforqt.h"
 #include "dialogs/donotshowagainmessagebox.h"
-
+#include "implementations/settingsforqt.h"
 
 AudioRecorderForQt::AudioRecorderForQt(QObject *parent)
-    : AudioInterfaceForQt(QAudio::AudioInput, parent)
-    , mAudioInput(nullptr) {
-}
+    : AudioInterfaceForQt(AudioMode::Input, parent), mAudioInput(nullptr) {}
 
-AudioRecorderForQt::~AudioRecorderForQt()
-{
-}
+AudioRecorderForQt::~AudioRecorderForQt() {}
 
+QAudio::Error AudioRecorderForQt::createDevice(const QAudioFormat &format,
+                                               const QAudioDevice &info,
+                                               int bufferSizeMS) {
+  Q_UNUSED(bufferSizeMS);
 
-QAudio::Error AudioRecorderForQt::createDevice(const QAudioFormat &format, const QAudioDeviceInfo &info, int bufferSizeMS) {
-    Q_UNUSED(bufferSizeMS);
-
-    mAudioInput = new QAudioInput(info, format);
-    if (mAudioInput->error() != QAudio::NoError) {
-        LogE("Error creating QAudioInput with error %d", mAudioInput->error());
-        return mAudioInput->error();
-    }
-
-    LogI("Initialized Qt audio recorder using device: %s", getDeviceName().c_str());
-
+  mAudioInput = new QAudioSource(info, format);
+  if (mAudioInput->error() != QAudio::NoError) {
+    LogE("Error creating QAudioSource with error %d", mAudioInput->error());
     return mAudioInput->error();
+  }
+
+  LogI("Initialized Qt audio recorder using device: %s",
+       getDeviceName().c_str());
+
+  return mAudioInput->error();
 }
 
 void AudioRecorderForQt::exit() {
-    stop();
-    if (mAudioInput)
-    {
-        mAudioInput->reset();
-        delete mAudioInput;
-        mAudioInput = nullptr;
-    }
+  stop();
+  if (mAudioInput) {
+    mAudioInput->reset();
+    delete mAudioInput;
+    mAudioInput = nullptr;
+  }
 
-    LogI("Qt audio recorder closed.");
+  LogI("Qt audio recorder closed.");
 }
 
 void AudioRecorderForQt::start() {
-    LogI("Start Qt audio input device")
-    if (not mAudioInput)
-    {
-        LogI("Audio input device was not created and thus cannot be started.");
-        return;
+  LogI("Start Qt audio input device") if (not mAudioInput) {
+    LogI("Audio input device was not created and thus cannot be started.");
+    return;
+  }
+  if (!mPCMDevice.isOpen()) {
+    if (!mPCMDevice.open(QIODevice::WriteOnly)) {
+      LogE("Could not open io device");
+    } else {
+      mAudioInput->start(&mPCMDevice);
+      if (mAudioInput->error() != QAudio::NoError) {
+        qWarning() << "Error opening QAudioOutput with error "
+                   << mAudioInput->error();
+      }
     }
-    if (!mPCMDevice.isOpen()) {
-        if (!mPCMDevice.open(QIODevice::WriteOnly)) {
-            LogE("Could not open io device");
-        } else {
-            mAudioInput->start(&mPCMDevice);
-            if (mAudioInput->error() != QAudio::NoError)
-            {
-                qWarning() << "Error opening QAudioOutput with error " << mAudioInput->error();
-            }
-        }
-    }
-    if (isSuspended()) {
-        mAudioInput->suspend();
-    }
+  }
+  if (isSuspended()) {
+    mAudioInput->suspend();
+  }
 }
 
 void AudioRecorderForQt::stop() {
-    LogI("Stop Qt audio device");
-    if (!mAudioInput) return;
-    mAudioInput->stop();
-    mPCMDevice.close();
+  LogI("Stop Qt audio device");
+  if (!mAudioInput)
+    return;
+  mAudioInput->stop();
+  mPCMDevice.close();
 }
 
-void AudioRecorderForQt::suspendChanged(bool v)
-{
-    if (mAudioInput) {
-        if (v) {mAudioInput->suspend();}
-        else {mAudioInput->resume();}
+void AudioRecorderForQt::suspendChanged(bool v) {
+  if (mAudioInput) {
+    if (v) {
+      mAudioInput->suspend();
+    } else {
+      mAudioInput->resume();
     }
+  }
 }
 
 void AudioRecorderForQt::setGain(double volume) {
-    if (mAudioInput) {
-        mAudioInput->setVolume(volume);
-    }
+  if (mAudioInput) {
+    mAudioInput->setVolume(volume);
+  }
 }
 
 double AudioRecorderForQt::getGain() const {
-    if (mAudioInput) {
-        return mAudioInput->volume();
-    }
-    return 1;
+  if (mAudioInput) {
+    return mAudioInput->volume();
+  }
+  return 1;
 }

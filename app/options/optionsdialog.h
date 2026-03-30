@@ -20,19 +20,19 @@
 #ifndef OPTIONSDIALOG_H
 #define OPTIONSDIALOG_H
 
-#include <QDialog>
-#include <QAudioDeviceInfo>
-#include <QVBoxLayout>
-#include <QGridLayout>
-#include <QFormLayout>
-#include <QTabWidget>
-#include <QListWidget>
-#include <QDialogButtonBox>
-#include <QComboBox>
-#include <QLabel>
-#include <QPushButton>
-#include <QToolBar>
+#include <QAudioDevice>
 #include <QButtonGroup>
+#include <QComboBox>
+#include <QDialog>
+#include <QDialogButtonBox>
+#include <QFormLayout>
+#include <QGridLayout>
+#include <QLabel>
+#include <QListWidget>
+#include <QPushButton>
+#include <QTabWidget>
+#include <QToolBar>
+#include <QVBoxLayout>
 
 #include "prerequisites.h"
 
@@ -42,52 +42,49 @@ class AudioRecorderAdapter;
 class AudioPlayerAdapter;
 class MainWindow;
 
-namespace options
-{
+namespace options {
 
 class CentralWidgetInterface;
 
-class OptionsDialog : public QDialog
-{
-    Q_OBJECT
+class OptionsDialog : public QDialog {
+  Q_OBJECT
 public:
-    enum OptionPages
-    {
-        PAGE_ENVIRONMENT = 0,
-        PAGE_AUDIO,
-    };
+  enum OptionPages {
+    PAGE_ENVIRONMENT = 0,
+    PAGE_AUDIO,
+  };
 
-    OptionsDialog(MainWindow *mainWindow);
-    virtual ~OptionsDialog();
+  OptionsDialog(MainWindow *mainWindow);
+  virtual ~OptionsDialog();
 
-
-    Core *getCore() const {return mCore;}
-    MainWindow *getMainWindow() const {return mMainWindow;}
+  Core *getCore() const { return mCore; }
+  MainWindow *getMainWindow() const { return mMainWindow; }
 
 protected:
-    void accept() override final;
-    void reject() override final;
+  void accept() override final;
+  void reject() override final;
 
 protected slots:
-    void onCurrentSelectionChanged(int);
-    void onApply();
-    void onChangesMade();
+  void onCurrentSelectionChanged(int);
+  void onApply();
+  void onChangesMade();
 
 private:
-    bool checkForChanges(bool allowCancel);
-    void clearPages();
-    void addPageButton (QIcon icon, QString text, QButtonGroup *group, QToolBar *tb, OptionPages page);
+  bool checkForChanges(bool allowCancel);
+  void clearPages();
+  void addPageButton(QIcon icon, QString text, QButtonGroup *group,
+                     QToolBar *tb, OptionPages page);
 
 private:
-    MainWindow *mMainWindow;
-    Core *mCore;
-    QGridLayout *mMainLayout;
-    CentralWidgetInterface *mCentralWidget;
-    QLabel *mTitle;
-    QButtonGroup *mPageButtons;
-    bool mChangesMade;
+  MainWindow *mMainWindow;
+  Core *mCore;
+  QGridLayout *mMainLayout;
+  CentralWidgetInterface *mCentralWidget;
+  QLabel *mTitle;
+  QButtonGroup *mPageButtons;
+  bool mChangesMade;
 };
 
-}  // namespace options
+} // namespace options
 
 #endif // OPTIONSDIALOG_H

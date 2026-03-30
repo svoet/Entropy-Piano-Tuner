@@ -18,25 +18,30 @@
  *****************************************************************************/
 
 #include "optionspageaudio.h"
+#include "mainwindow/mainwindow.h"
 #include "optionspageaudioinputoutputpage.h"
 #include "optionspageaudiomidipage.h"
-#include "mainwindow/mainwindow.h"
 
 namespace options {
 
-PageAudio::PageAudio(OptionsDialog *optionsDialog) :
-    PageSavingTabWidget("audio"),
-    CentralWidgetInterface(this)
-{
-    this->addTab(new PageAudioInputOutput(optionsDialog, QAudio::AudioInput), tr("Input device"));
-    this->addTab(new PageAudioInputOutput(optionsDialog, QAudio::AudioOutput), tr("Output device"));
-    this->addTab(new PageAudioMidi(optionsDialog, optionsDialog->getMainWindow()->getMidiAutoConnector()), tr("Midi"));
+PageAudio::PageAudio(OptionsDialog *optionsDialog)
+    : PageSavingTabWidget("audio"), CentralWidgetInterface(this) {
+  this->addTab(new PageAudioInputOutput(optionsDialog,
+                                        AudioInterfaceForQt::AudioMode::Input),
+               tr("Input device"));
+  this->addTab(new PageAudioInputOutput(optionsDialog,
+                                        AudioInterfaceForQt::AudioMode::Output),
+               tr("Output device"));
+  this->addTab(
+      new PageAudioMidi(optionsDialog,
+                        optionsDialog->getMainWindow()->getMidiAutoConnector()),
+      tr("Midi"));
 
-    restorePageFromSettings();
+  restorePageFromSettings();
 }
 
 void PageAudio::apply() {
-    dynamic_cast<ContentsWidgetInterface*>(currentWidget())->apply();
+  dynamic_cast<ContentsWidgetInterface *>(currentWidget())->apply();
 }
 
-}  // namespace options
+} // namespace options

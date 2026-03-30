@@ -23,13 +23,13 @@
 
 #include "filemanagerforqt.h"
 
-#include <QStandardPaths>
 #include <QDir>
 #include <QFile>
+#include <QStandardPaths>
 #include <QTextStream>
 
-#include "core/system/log.h"
 #include "core/system/eptexception.h"
+#include "core/system/log.h"
 
 //-----------------------------------------------------------------------------
 //                              Constructor
@@ -42,17 +42,18 @@
 /// corresponding warnings.
 ///////////////////////////////////////////////////////////////////////////////
 
-FileManagerForQt::FileManagerForQt()
-{
-    // Create writable directories if they do not yet exist
-    if (not QDir().mkpath(QStandardPaths::writableLocation(QStandardPaths::CacheLocation)))
-        LogW("Could not create or find a writeable location for the cache");
-    if (not QDir().mkpath(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation)))
-        LogW("Could not create or find a writeable location for the generic cache");
-    if (not QDir().mkpath(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)))
-        LogW("Could not create or find a writeable location for the documentation");
+FileManagerForQt::FileManagerForQt() {
+  // Create writable directories if they do not yet exist
+  if (not QDir().mkpath(
+          QStandardPaths::writableLocation(QStandardPaths::CacheLocation)))
+    LogW("Could not create or find a writeable location for the cache");
+  if (not QDir().mkpath(QStandardPaths::writableLocation(
+          QStandardPaths::GenericCacheLocation)))
+    LogW("Could not create or find a writeable location for the generic cache");
+  if (not QDir().mkpath(
+          QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)))
+    LogW("Could not create or find a writeable location for the documentation");
 }
-
 
 //-----------------------------------------------------------------------------
 //                        Return path of the log file
@@ -67,12 +68,12 @@ FileManagerForQt::FileManagerForQt()
 /// \return : String containing the path to the log file
 ///////////////////////////////////////////////////////////////////////////////
 
-std::string FileManagerForQt::getLogFilePath(const std::string &logname) const
-{
-    QDir directory(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation));
-    return directory.absoluteFilePath(QString::fromStdString(logname)).toStdString();
+std::string FileManagerForQt::getLogFilePath(const std::string &logname) const {
+  QDir directory(
+      QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation));
+  return directory.absoluteFilePath(QString::fromStdString(logname))
+      .toStdString();
 }
-
 
 //-----------------------------------------------------------------------------
 //    Read the content of the XML file of an algorithm with the given ID
@@ -84,21 +85,22 @@ std::string FileManagerForQt::getLogFilePath(const std::string &logname) const
 /// \return The whole content of the corresponding XML file in a single string.
 ///////////////////////////////////////////////////////////////////////////////
 
-std::wstring FileManagerForQt::getAlgorithmInformationFileContent (const std::string &algorithmId) const
-{
-    QFile file(QString::fromStdString(":/algorithms/" + algorithmId + ".xml"));
+std::wstring FileManagerForQt::getAlgorithmInformationFileContent(
+    const std::string &algorithmId) const {
+  QFile file(QString::fromStdString(":/algorithms/" + algorithmId + ".xml"));
 
-    // If the file does not exist throw an exception:
-    if (file.exists() == false)
-        EPT_EXCEPT(EptException::ERR_CANNOT_READ_FROM_FILE, "File '" + algorithmId + "' not found.");
+  // If the file does not exist throw an exception:
+  if (file.exists() == false)
+    EPT_EXCEPT(EptException::ERR_CANNOT_READ_FROM_FILE,
+               "File '" + algorithmId + "' not found.");
 
-    // If the existing file cannot be opened for reading throw an exception:
-    if (not file.open(QFile::ReadOnly | QFile::Text))
-        EPT_EXCEPT(EptException::ERR_CANNOT_READ_FROM_FILE, "File '" + algorithmId + "' could not be opened.");
+  // If the existing file cannot be opened for reading throw an exception:
+  if (not file.open(QFile::ReadOnly | QFile::Text))
+    EPT_EXCEPT(EptException::ERR_CANNOT_READ_FROM_FILE,
+               "File '" + algorithmId + "' could not be opened.");
 
-    QTextStream stream(&file);
-    stream.setCodec("UTF-8");
-    stream.setAutoDetectUnicode(true);
-    QString content = stream.readAll();
-    return content.toStdWString();
+  QTextStream stream(&file);
+  stream.setAutoDetectUnicode(true);
+  QString content = stream.readAll();
+  return content.toStdWString();
 }

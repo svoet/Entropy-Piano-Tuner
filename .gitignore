@@ -11,6 +11,7 @@
 # user files
 *.user
 *.user.*
+.qmake.stash
 
 # codeblocks files
 *.layout
@@ -24,20 +25,48 @@
 *.mobileprovision
 
 # generated files
-dependencies
+dependencies/
+bin/
+deploy/
+EntropyPianoTuner_Portable/
+EntropyPianoTuner_Portable.zip
+build_log*.txt
+build_qtmidi_log.txt
+Makefile*
+release/
+debug/
 *.pdf
 docs/doxy*
 docs/html*
 docs/latex*
 *.autosave
-log
-publish
+log/
+publish/
 .publish*
 .directory
 
+# compiled objects and binaries
+*.obj
+*.o
+*.a
+*.lib
+*.so
+*.dll
+*.exe
+*.exp
+*.pdb
+*.ilk
+*.idb
 
-# archies
+# Qt generated
+moc_*.cpp
+ui_*.h
+qrc_*.cpp
+
+# archives
 *.tar.gz
+*.zip
+*.7z
 /docs/*
 /platforms/android/gradle.properties
 /platforms/android/local.properties

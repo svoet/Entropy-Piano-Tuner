@@ -18,51 +18,51 @@
  *****************************************************************************/
 
 #include "platformtools.h"
-#include <QFileInfo>
-#include <QDir>
-#include <QStandardPaths>
 #include <QDebug>
+#include <QDir>
+#include <QFileInfo>
+#include <QStandardPaths>
 
 #include "tunerapplication.h"
 
 bool PlatformTools::loadStartupFile(const QStringList args) {
-    return openFileFromArgs(args);
+  return openFileFromArgs(args);
 }
 
 bool PlatformTools::openFileFromArgs(const QStringList &args) {
-    QString startupFile;
-    bool cached = false;
+  QString startupFile;
+  bool cached = false;
 
-    // get startup file from the arguments
-    if (args.size() > 1) {
-        // first argument is program name, second is path to file, maybe with whitespaces so combine all
-        QStringList pathParts(args);
-        pathParts.pop_front();  // program name
-        startupFile = pathParts.join(" ");
-        // search for ' ' that should keep the filename together
-        startupFile = startupFile.left(startupFile.lastIndexOf("'"));
-        startupFile = startupFile.right(startupFile.length() - startupFile.indexOf("'") - 1);
-        QFileInfo f(startupFile);
-        if (f.fileName() == startupFile) {
-            // search in documents folder by default
-            QDir docDir(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
-            startupFile = docDir.absoluteFilePath(f.fileName());
-        }
+  // get startup file from the arguments
+  if (args.size() > 1) {
+    // first argument is program name, second is path to file, maybe with
+    // whitespaces so combine all
+    QStringList pathParts(args);
+    pathParts.pop_front(); // program name
+    startupFile = pathParts.join(" ");
+    // search for ' ' that should keep the filename together
+    startupFile = startupFile.left(startupFile.lastIndexOf("'"));
+    startupFile =
+        startupFile.right(startupFile.length() - startupFile.indexOf("'") - 1);
+    QFileInfo f(startupFile);
+    if (f.fileName() == startupFile) {
+      // search in documents folder by default
+      QDir docDir(
+          QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
+      startupFile = docDir.absoluteFilePath(f.fileName());
     }
-    if (startupFile.isEmpty()) {
-        // empty file cannot be opened
-        return false;
-    }
-    return TunerApplication::getSingleton().openFile(startupFile, cached);
+  }
+  if (startupFile.isEmpty()) {
+    // empty file cannot be opened
+    return false;
+  }
+  return TunerApplication::getSingleton().openFile(startupFile, cached);
 }
 
 void PlatformTools::openFile(const char *file, bool cached) {
-    QString fileName(file);
-    LogI("Opening external file %s", file);
-    QMetaObject::invokeMethod(TunerApplication::getSingletonPtr(),
-                              "openFile",
-                              Qt::QueuedConnection,
-                              QGenericReturnArgument(0),
-                              Q_ARG(QString, fileName),
-                              Q_ARG(bool, cached));
+  QString fileName(file);
+  LogI("Opening external file %s", file);
+  QMetaObject::invokeMethod(TunerApplication::getSingletonPtr(),
+                            &TunerApplication::openFile, Qt::QueuedConnection,
+                            fileName, cached);
 }

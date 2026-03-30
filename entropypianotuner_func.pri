@@ -175,20 +175,20 @@ defineReplace(depends_qwt) {
     contains(EPT_THIRDPARTY_CONFIG, system_qwt) {
         CONFIG += qwt
     } else {
-        INCLUDEPATH += $$EPT_THIRDPARTY_DIR/qwt-lib/qwt
+        INCLUDEPATH += $$EPT_THIRDPARTY_DIR/qwt-lib/src
         LIBS += -L$$EPT_ROOT_OUT_DIR/thirdparty/qwt-lib
     }
 
     win32 {
         # if only Qwt depends on OpenGL the module will not get copied
         CONFIG(debug, debug|release){
-            LIBS += -L$$EPT_ROOT_OUT_DIR/thirdparty/qwt-lib/debug -lqwtd
-            DLLS += $$EPT_ROOT_OUT_DIR/thirdparty/qwt-lib/debug/qwtd.dll
-            DLLS += $$(QTDIR)/bin/Qt5OpenGLd.dll
+            LIBS += -L$$EPT_ROOT_OUT_DIR/thirdparty/qwt-lib/lib -lqwtd
+            DLLS += $$EPT_ROOT_OUT_DIR/thirdparty/qwt-lib/lib/qwtd.dll
+            DLLS += $$(QTDIR)/bin/Qt6OpenGLd.dll
         } else {
-            LIBS += -L$$EPT_ROOT_OUT_DIR/thirdparty/qwt-lib/release -lqwt
-            DLLS += $$EPT_ROOT_OUT_DIR/thirdparty/qwt-lib/release/qwt.dll
-            DLLS += $$(QTDIR)/bin/Qt5OpenGL.dll
+            LIBS += -L$$EPT_ROOT_OUT_DIR/thirdparty/qwt-lib/lib -lqwt
+            DLLS += $$EPT_ROOT_OUT_DIR/thirdparty/qwt-lib/lib/qwt.dll
+            DLLS += $$(QTDIR)/bin/Qt6OpenGL.dll
         }
     } else:macx {
         # use framework on mac
@@ -196,13 +196,13 @@ defineReplace(depends_qwt) {
     } else:android {
         LIBS += -lqwt
         ANDROID_EXTRA_LIBS += \
-            $$[QT_INSTALL_LIBS]/libQt5OpenGL.so \
+            $$[QT_INSTALL_LIBS]/libQt6OpenGL.so \
             $$EPT_ROOT_OUT_DIR/thirdparty/qwt-lib/libqwt.so
     } else:!contains(EPT_THIRDPARTY_CONFIG, system_qwt) {
         LIBS += -lqwt
         DLLS += "$$EPT_ROOT_OUT_DIR/thirdparty/qwt-lib/libqwt.so*"
     } else {
-        LIBS += -lqwt-qt5
+        LIBS += -lqwt-qt6
     }
 
 
@@ -245,12 +245,21 @@ defineReplace(depends_winrtbridge) {
     return(true)
 }
 
+defineReplace(depends_qtmidi) {
+    INCLUDEPATH += $$EPT_ROOT_DIR/qtmidi
+    LIBS += -L$$EPT_ROOT_DIR/qtmidi/qtmidi/lib -lqtmidi
+    win32:LIBS += -lwinmm
+    export(INCLUDEPATH)
+    export(LIBS)
+    return(true)
+}
+
 defineReplace(depends_tp3log) {
     INCLUDEPATH += $$EPT_THIRDPARTY_DIR/tp3log
-    LIBS += -L$$EPT_ROOT_OUT_DIR/thirdparty/tp3log/tp3log -ltp3log
+    LIBS += -L$$EPT_ROOT_OUT_DIR/thirdparty/tp3log/tp3log/lib -ltp3log
     tp3LogDLL {
-        android:ANDROID_EXTRA_LIBS += $$EPT_ROOT_OUT_DIR/thirdparty/tp3log/tp3log/libtp3log.so
-        win32:DLLS += $$EPT_ROOT_OUT_DIR/thirdparty/tp3log/tp3log/tp3log.dll
+        android:ANDROID_EXTRA_LIBS += $$EPT_ROOT_OUT_DIR/thirdparty/tp3log/tp3log/lib/libtp3log.so
+        # win32: tp3log is built as a static library, no DLL to copy
     }
 
     export(LIBS)

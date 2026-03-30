@@ -7,7 +7,7 @@
 #-------------------------------------------------
 
 # Qt modules
-QT          += core gui multimedia widgets concurrent midi
+QT          += core gui multimedia widgets concurrent
 qtHaveModule(svg):QT += svg
 android:QT  += androidextras
 
@@ -98,6 +98,7 @@ $$depends_getmemorysize()
 $$depends_libuv()
 $$depends_qwt()
 $$depends_timesupport()
+$$depends_qtmidi()
 
 #-------------------------------------------------
 #                      Apple

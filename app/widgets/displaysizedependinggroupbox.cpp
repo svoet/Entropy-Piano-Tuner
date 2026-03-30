@@ -20,36 +20,35 @@
 #include "displaysizedependinggroupbox.h"
 #include "displaysize.h"
 
-DisplaySizeDependingGroupBox::DisplaySizeDependingGroupBox(QWidget *parent, QLayout *mainLayout, int operationModeFlags) :
-    QWidget(parent),
-    mOperationModeFlags(operationModeFlags)
-{
-    setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+DisplaySizeDependingGroupBox::DisplaySizeDependingGroupBox(
+    QWidget *parent, QLayout *mainLayout, int operationModeFlags)
+    : QWidget(parent), mOperationModeFlags(operationModeFlags) {
+  setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
 
-    mMainWidgetContainer = this;
+  mMainWidgetContainer = this;
 
-    if (DisplaySizeDefines::getSingleton()->getMainGroupBoxDisplayStyle() == MGBDS_NORMAL) {
-        // on normal displays draw a group box around the data
-        QVBoxLayout *dummyLayout = new QVBoxLayout;
-        this->setLayout(dummyLayout);
-        dummyLayout->setMargin(0);
-        mGroupBox = new QGroupBox;
-        dummyLayout->addWidget(mGroupBox);
-        mMainWidgetContainer = mGroupBox;
-    } else {
-        mainLayout->setMargin(0);
-    }
+  if (DisplaySizeDefines::getSingleton()->getMainGroupBoxDisplayStyle() ==
+      MGBDS_NORMAL) {
+    // on normal displays draw a group box around the data
+    QVBoxLayout *dummyLayout = new QVBoxLayout;
+    this->setLayout(dummyLayout);
+    dummyLayout->setContentsMargins(0, 0, 0, 0);
+    mGroupBox = new QGroupBox;
+    dummyLayout->addWidget(mGroupBox);
+    mMainWidgetContainer = mGroupBox;
+  } else {
+    mainLayout->setContentsMargins(0, 0, 0, 0);
+  }
 
-    mMainWidgetContainer->setLayout(mainLayout);
+  mMainWidgetContainer->setLayout(mainLayout);
 }
 
 void DisplaySizeDependingGroupBox::setTitle(QString title) {
-    if (mGroupBox) {
-        mGroupBox->setTitle(title);
-    }
+  if (mGroupBox) {
+    mGroupBox->setTitle(title);
+  }
 }
 
 void DisplaySizeDependingGroupBox::onModeChanged(OperationMode mode) {
-    setVisible((mOperationModeFlags & toFlag(mode)) > 0);
+  setVisible((mOperationModeFlags & toFlag(mode)) > 0);
 }
-
