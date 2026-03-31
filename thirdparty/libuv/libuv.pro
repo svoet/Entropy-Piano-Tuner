@@ -58,6 +58,8 @@ linux|android {
     HEADERS += \
         libuv/include/uv/linux.h
 
+    DEFINES += "_GNU_SOURCE"
+
 }
 
 mac {
