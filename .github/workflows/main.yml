@@ -57,3 +57,9 @@ jobs:
           else
             make -j$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 2)
           fi
+
+      - name: Cleanup thirdparty on failure
+        if: failure()
+        run: |
+          echo "Build failed. Cleaning up thirdparty directory."
+          rm -rf thirdparty
