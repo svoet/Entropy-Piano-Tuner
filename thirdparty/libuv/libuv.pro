@@ -18,6 +18,7 @@ SOURCES += \
         libuv/src/inet.c \
         libuv/src/queue.h \
         libuv/src/threadpool.c \
+        libuv/src/timer.c \
         libuv/src/uv-common.c \
         libuv/src/uv-common.h \
         libuv/src/version.c
@@ -28,7 +29,6 @@ linux|android|mac {
     # unix specific
     SOURCES += \
                    libuv/src/unix/async.c \
-                   libuv/src/unix/atomic-ops.h \
                    libuv/src/unix/core.c \
                    libuv/src/unix/dl.c \
                    libuv/src/unix/fs.c \
@@ -41,11 +41,9 @@ linux|android|mac {
                    libuv/src/unix/poll.c \
                    libuv/src/unix/process.c \
                    libuv/src/unix/signal.c \
-                   libuv/src/unix/spinlock.h \
                    libuv/src/unix/stream.c \
                    libuv/src/unix/tcp.c \
                    libuv/src/unix/thread.c \
-                   libuv/src/unix/timer.c \
                    libuv/src/unix/tty.c \
                    libuv/src/unix/udp.c
 }
@@ -54,14 +52,11 @@ linux|android {
     # linux specific
 
     SOURCES += \
-        libuv/src/unix/linux-core.c \
-        libuv/src/unix/linux-inotify.c \
-        libuv/src/unix/linux-syscalls.c \
-        libuv/src/unix/linux-syscalls.h \
+        libuv/src/unix/linux.c \
         libuv/src/unix/proctitle.c
 
     HEADERS += \
-        libuv/include/uv-linux.h
+        libuv/include/uv/linux.h
 
 }
 
@@ -75,7 +70,7 @@ mac {
         libuv/src/unix/kqueue.c \
         libuv/src/unix/proctitle.c
 
-    HEADERS += libuv/include/uv-darwin.h
+    HEADERS += libuv/include/uv/darwin.h
 
     DEFINES += "_DARWIN_USE_64_BIT_INODE=1"
     DEFINES += "_DARWIN_UNLIMITED_SELECT=1"
