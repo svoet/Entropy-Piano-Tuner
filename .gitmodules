@@ -6,7 +6,7 @@
 	url = https://github.com/libuv/libuv.git
 [submodule "thirdparty/qwt-lib"]
 	path = thirdparty/qwt-lib
-	url = https://github.com/svoet/qwt-lib.git
+	url = https://git.code.sf.net/p/qwt/git
 [submodule "thirdparty/tp3log"]
 	path = thirdparty/tp3log
 	url = https://gitlab.com/tp3/tp3log.git
