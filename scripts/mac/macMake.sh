@@ -112,7 +112,7 @@ if $DO_BUILD ; then
 
 	# copy fftw3 and qwt
 	mkdir -p $_TARGET_DIR/$BINARY_FILE_NAME.app/Contents/Frameworks
-	cp -r thirdparty/qwt-lib/qwt.framework $_TARGET_DIR/$BINARY_FILE_NAME.app/Contents/Frameworks/.
+	cp -r thirdparty/qwt/qwt.framework $_TARGET_DIR/$BINARY_FILE_NAME.app/Contents/Frameworks/.
 	cp thirdparty/fftw3/libfftw3*.dylib $_TARGET_DIR/$BINARY_FILE_NAME.app/Contents/Frameworks/.
 
 	# adjust search paths for lib	

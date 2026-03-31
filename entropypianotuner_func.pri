@@ -175,32 +175,32 @@ defineReplace(depends_qwt) {
     contains(EPT_THIRDPARTY_CONFIG, system_qwt) {
         CONFIG += qwt
     } else {
-        INCLUDEPATH += $$EPT_THIRDPARTY_DIR/qwt-lib/src
-        LIBS += -L$$EPT_ROOT_OUT_DIR/thirdparty/qwt-lib
+        INCLUDEPATH += $$EPT_THIRDPARTY_DIR/qwt/src
+        LIBS += -L$$EPT_ROOT_OUT_DIR/thirdparty/qwt
     }
 
     win32 {
         # if only Qwt depends on OpenGL the module will not get copied
         CONFIG(debug, debug|release){
-            LIBS += -L$$EPT_ROOT_OUT_DIR/thirdparty/qwt-lib/lib -lqwtd
-            DLLS += $$EPT_ROOT_OUT_DIR/thirdparty/qwt-lib/lib/qwtd.dll
+            LIBS += -L$$EPT_ROOT_OUT_DIR/thirdparty/qwt/lib -lqwtd
+            DLLS += $$EPT_ROOT_OUT_DIR/thirdparty/qwt/lib/qwtd.dll
             DLLS += $$(QTDIR)/bin/Qt6OpenGLd.dll
         } else {
-            LIBS += -L$$EPT_ROOT_OUT_DIR/thirdparty/qwt-lib/lib -lqwt
-            DLLS += $$EPT_ROOT_OUT_DIR/thirdparty/qwt-lib/lib/qwt.dll
+            LIBS += -L$$EPT_ROOT_OUT_DIR/thirdparty/qwt/lib -lqwt
+            DLLS += $$EPT_ROOT_OUT_DIR/thirdparty/qwt/lib/qwt.dll
             DLLS += $$(QTDIR)/bin/Qt6OpenGL.dll
         }
     } else:macx {
         # use framework on mac
-        LIBS += -F$$EPT_ROOT_OUT_DIR/thirdparty/qwt-lib -framework qwt
+        LIBS += -F$$EPT_ROOT_OUT_DIR/thirdparty/qwt -framework qwt
     } else:android {
         LIBS += -lqwt
         ANDROID_EXTRA_LIBS += \
             $$[QT_INSTALL_LIBS]/libQt6OpenGL.so \
-            $$EPT_ROOT_OUT_DIR/thirdparty/qwt-lib/libqwt.so
+            $$EPT_ROOT_OUT_DIR/thirdparty/qwt/libqwt.so
     } else:!contains(EPT_THIRDPARTY_CONFIG, system_qwt) {
         LIBS += -lqwt
-        DLLS += "$$EPT_ROOT_OUT_DIR/thirdparty/qwt-lib/libqwt.so*"
+        DLLS += "$$EPT_ROOT_OUT_DIR/thirdparty/qwt/libqwt.so*"
     } else {
         LIBS += -lqwt-qt6
     }

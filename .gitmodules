@@ -4,8 +4,8 @@
 [submodule "thirdparty/libuv/libuv"]
 	path = thirdparty/libuv/libuv
 	url = https://github.com/libuv/libuv.git
-[submodule "thirdparty/qwt-lib"]
-	path = thirdparty/qwt-lib
+[submodule "thirdparty/qwt"]
+	path = thirdparty/qwt
 	url = https://git.code.sf.net/p/qwt/git
 [submodule "thirdparty/tp3log"]
 	path = thirdparty/tp3log
