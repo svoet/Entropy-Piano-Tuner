@@ -45,9 +45,16 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libfftw3-dev libpulse-dev libasound2-dev libgl1-mesa-dev libxkbcommon-x11-0
-
+        if: matrix.os == 'macos-latest'
+        run: |
+          cp ./scripts/mac/mac_env.template.sh ./scripts/mac/mac_env.user.sh
+          sh ./scripts/mac/macMake.sh -s
       - name: Build
         shell: bash
+        if: matrix.os == 'macos-latest'
+        run: |
+          sh ./scripts/mac/macMake.sh -b
+        else:
         run: |
           mkdir build
           cd build
