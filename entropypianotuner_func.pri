@@ -97,6 +97,7 @@ defineReplace(depends_dirent) {
     return(true)
 }
 
+
 defineReplace(depends_fftw3) {
     fftw3 {
         contains(EPT_THIRDPARTY_CONFIG, system_fftw3) {
@@ -192,7 +193,7 @@ defineReplace(depends_qwt) {
         }
     } else:macx {
         # use framework on mac
-        LIBS += -F$$EPT_ROOT_OUT_DIR/thirdparty/qwt -framework qwt
+        LIBS += -F$$EPT_ROOT_OUT_DIR/thirdparty/qwt/lib -framework qwt
     } else:android {
         LIBS += -lqwt
         ANDROID_EXTRA_LIBS += \
@@ -246,8 +247,8 @@ defineReplace(depends_winrtbridge) {
 }
 
 defineReplace(depends_qtmidi) {
-    INCLUDEPATH += $$EPT_ROOT_DIR/qtmidi
-    LIBS += -L$$EPT_ROOT_DIR/qtmidi/qtmidi/lib -lqtmidi
+    INCLUDEPATH += $$EPT_THIRDPARTY_DIR/qtmidi/
+    LIBS += -L$$EPT_ROOT_OUT_DIR/thirdparty/qtmidi/qtmidi/lib -lqtmidi
     win32:LIBS += -lwinmm
     export(INCLUDEPATH)
     export(LIBS)

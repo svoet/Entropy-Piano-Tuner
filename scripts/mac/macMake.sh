@@ -6,11 +6,13 @@
 # automatic fail on errors
 set -e
 
-cd ${0%/*}
+#cd ${0%/*}
+cd ` dirname $0 `
 
 # load the user environment
 . ./mac_env.user.sh
 
+DO_SETUP=false
 DO_CLEAR=false
 DO_BUILD=false
 DO_DMG=false
@@ -22,14 +24,19 @@ _TARGET_DIR="bin"
 
 echo "Parsing options."
 # parse options
+# -s setup
 # -c clear
 # -b compile and build binary
 # -d make the dmg file
 # -u upload the files to the server
 # -t release translations
 # -v update version code
-while getopts ":cbdutv" opt; do
+while getopts ":scbdutv" opt; do
 	case $opt in
+		s)
+			echo "Setting up."
+			DO_SETUP=true
+			;;
 		c)
 			echo "Clearing build at $BUILD_DIR."
 			DO_CLEAR=true
@@ -62,6 +69,31 @@ while getopts ":cbdutv" opt; do
 done
 
 echo "Options parsed."
+
+# Platform setup
+###########################################################
+if $DO_SETUP ; then
+	echo "Setting up system."
+	#if [ ! -d "$QTDIR" ]; then
+	#	mkdir -p $QTDIR
+	#	git clone --branch v${QTVERSION} git://code.qt.io/qt/qt5.git $QTDIR
+	#	cd $QTDIR
+	#	./init-repository --module-subset=default
+	#fi
+	brew install cmake qt@6 make
+	echo "Done."
+fi
+
+#Pre-Flight checks
+if [ ! -d "$QTDIR" ]; then
+    echo "$QTDIR is not a valid Qt installation"
+    exit -1
+fi
+
+if [ ! -d "$QT_BIN_DIR" ]; then
+	echo "The binary path of qt does not exist: $QT_BIN_DIR"
+	exit
+fi
 
 # Version update
 ###########################################################
@@ -112,8 +144,8 @@ if $DO_BUILD ; then
 
 	# copy fftw3 and qwt
 	mkdir -p $_TARGET_DIR/$BINARY_FILE_NAME.app/Contents/Frameworks
-	cp -r thirdparty/qwt/qwt.framework $_TARGET_DIR/$BINARY_FILE_NAME.app/Contents/Frameworks/.
-	cp thirdparty/fftw3/libfftw3*.dylib $_TARGET_DIR/$BINARY_FILE_NAME.app/Contents/Frameworks/.
+	cp -r $BUILD_DIR/thirdparty/qwt/lib/qwt.framework $_TARGET_DIR/$BINARY_FILE_NAME.app/Contents/Frameworks/.
+	cp $BUILD_DIR/thirdparty/fftw3/libfftw3*.dylib $_TARGET_DIR/$BINARY_FILE_NAME.app/Contents/Frameworks/.
 
 	# adjust search paths for lib	
 	install_name_tool -change qwt.framework/Versions/6/qwt @executable_path/../Frameworks/qwt.framework/Versions/6/qwt $_TARGET_DIR/$BINARY_FILE_NAME.app/Contents/MacOS/entropypianotuner 

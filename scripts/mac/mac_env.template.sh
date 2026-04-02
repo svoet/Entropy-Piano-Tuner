@@ -13,8 +13,11 @@
 # important paths (change these!)
 ###########################################################
 
+export QTVERSION=6.11.0
+export QTBASEPATH="/opt/homebrew/Cellar/qt/"
+
 # path to the qt base directory (e.g. "/Library/Qt/5.4/clang_64")
-export QTDIR="/Library/Qt/5.4/clang_64"
+export QTDIR="${QTBASEPATH}/${QTVERSION}"
 
 # arguments for the make command (e.g. -j4)
 export MAKE_ARGS=-j4
@@ -48,15 +51,7 @@ DMG_FILE_NAME="EntropyPianoTuner_MacOsX_$CONFIG"
 export QT_BIN_DIR=${QTDIR}"/bin"
 export QT_LIB_DIR=${QTDIR}"/lib"
 
-if [ ! -d "$QTDIR" ]; then
-    echo "$QTDIR is not a valid Qt installation"
-    exit -1
-fi
 
-if [ ! -d "$QT_BIN_DIR" ]; then
-	echo "The binary path of qt does not exist: $QT_BIN_DIR"
-	exit
-fi
 
 # set other usefull paths
 ###########################################################

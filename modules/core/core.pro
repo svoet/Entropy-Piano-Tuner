@@ -34,6 +34,7 @@ $$depends_getmemorysize()
 $$depends_libuv()
 $$depends_timesupport()
 $$depends_tp3log()
+$$depends_qtmidi()
 
 # debugging flags: all warnings and check arrays, etc
 linux-g++*:!android {
